@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisi Investimento Immobiliare | Costa Adeje, Tenerife</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Beige, Warm Grey, Teal, Terracotta) -->
+    <!-- Application Structure Plan: A single-page dashboard with thematic sections (Market, Visitor, Opps/Risks, Investment, Action Plan) navigated by a sticky header. This non-linear structure allows investors to quickly access specific data points. Key interactions include a property type filter to dynamically update ADR and price data, and an accordion for the action plan to improve readability. -->
+    <!-- Visualization & Content Choices: KPIs as large-font cards for immediate impact. Bar chart (Chart.js) to compare tourist nationalities (Goal: Compare). Donut chart (Chart.js) for visitor motivations (Goal: Proportions). Line chart (Chart.js) for property price trends (Goal: Change). Accordion (HTML/JS) for the action plan (Goal: Organize). This avoids SVG/Mermaid and uses interactive canvas charts and structured HTML for a dynamic user experience. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #F8F5F2;
+            color: #4A4A4A;
+        }
+        .kpi-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .nav-link {
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #4E8D7C;
+        }
+        .risk-card {
+            border-left: 5px solid #C06C5D;
+        }
+        .opportunity-card {
+            border-left: 5px solid #4E8D7C;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-md">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-[#4E8D7C]">Tenerife Investment Dashboard</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#market-overview" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Panoramica Mercato</a>
+                        <a href="#visitor-profile" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Profilo Turista</a>
+                        <a href="#opportunities" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Opportunità & Rischi</a>
+                        <a href="#investment-analysis" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Analisi Investimento</a>
+                        <a href="#action-plan" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Piano d'Azione</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        
+        <section id="market-overview" class="mb-16">
+            <h2 class="text-3xl font-extrabold text-[#4E8D7C] mb-2">Panoramica del Mercato 2024: Un Anno Record</h2>
+            <p class="text-lg mb-8 text-gray-600">Il 2024 ha segnato un nuovo massimo storico per il turismo a Tenerife, creando un contesto eccezionalmente favorevole per gli investimenti. I dati consuntivi evidenziano una domanda robusta e in continua crescita.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="kpi-card text-center">
+                    <p class="text-4xl font-extrabold text-[#4E8D7C]">17.7M</p>
+                    <p class="text-gray-500 mt-2">Visitatori Totali (Canarie)</p>
+                </div>
+                <div class="kpi-card text-center">
+                    <p class="text-4xl font-extrabold text-[#4E8D7C]">+9.1%</p>
+                    <p class="text-gray-500 mt-2">Crescita Turisti Internazionali vs 2023</p>
+                </div>
+                <div class="kpi-card text-center">
+                    <p class="text-4xl font-extrabold text-[#4E8D7C]">9.4</p>
+                    <p class="text-gray-500 mt-2">Notti di Soggiorno Medio</p>
+                </div>
+                <div class="kpi-card text-center">
+                    <p class="text-4xl font-extrabold text-[#4E8D7C]">€5,277/m²</p>
+                    <p class="text-gray-500 mt-2">Prezzo Medio Immobili (Costa Adeje)</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                 <h3 class="text-xl font-bold mb-4">Principali Mercati di Provenienza (2024)</h3>
+                 <p class="text-sm text-gray-500 mb-4">Il Regno Unito si conferma il mercato leader, seguito da Germania e Francia. Il mercato francese, in particolare, mostra una crescita dinamica e un crescente interesse per gli affitti privati.</p>
+                <div class="chart-container">
+                    <canvas id="marketChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="visitor-profile" class="mb-16">
+            <h2 class="text-3xl font-extrabold text-[#4E8D7C] mb-2">Chi è il Turista di Costa Adeje?</h2>
+            <p class="text-lg mb-8 text-gray-600">Il visitatore tipo è un pianificatore con alta capacità di spesa, alla ricerca di relax e comfort. Comprendere il suo profilo è la chiave per un'offerta di successo.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="kpi-card">
+                        <h4 class="font-bold text-lg mb-2">Profilo Demografico</h4>
+                        <ul class="space-y-2 text-gray-600">
+                            <li><span class="font-semibold">Età Media:</span> 46.8 anni</li>
+                            <li><span class="font-semibold">Reddito Familiare Medio:</span> €54,750</li>
+                            <li><span class="font-semibold">Professione:</span> 56% Dipendente, 19% Autonomo</li>
+                        </ul>
+                    </div>
+                    <div class="kpi-card">
+                        <h4 class="font-bold text-lg mb-2">Comportamento di Spesa</h4>
+                        <ul class="space-y-2 text-gray-600">
+                            <li><span class="font-semibold">Spesa Media Giornaliera:</span> €177</li>
+                            <li><span class="font-semibold">Spesa Media per Viaggio:</span> €1,443</li>
+                            <li><span class="font-semibold">Finestra di Prenotazione:</span> 54% prenota 3+ mesi prima</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <h3 class="text-xl font-bold mb-4 text-center">Motivazioni del Viaggio</h3>
+                    <div class="chart-container h-64">
+                        <canvas id="motivationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="opportunities" class="mb-16">
+            <h2 class="text-3xl font-extrabold text-[#4E8D7C] mb-2">Opportunità Strategiche e Rischi da Monitorare</h2>
+            <p class="text-lg mb-8 text-gray-600">Il mercato offre nuove nicchie di domanda ad alto valore, ma presenta un significativo rischio normativo legato all'overtourism che richiede un approccio cauto e informato.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Vettori di Crescita</h3>
+                    <div class="space-y-6">
+                        <div class="kpi-card opportunity-card">
+                            <h4 class="font-bold text-lg text-[#4E8D7C]">Nomadi Digitali & "Workation"</h4>
+                            <p class="text-gray-600 mt-2">Segmento in forte crescita che richiede soggiorni lunghi e dotazioni specifiche (Wi-Fi veloce, spazio lavoro). Un'opportunità per stabilizzare l'occupazione, specialmente in media stagione.</p>
+                        </div>
+                        <div class="kpi-card opportunity-card">
+                            <h4 class="font-bold text-lg text-[#4E8D7C]">Dinamismo del Mercato Francese</h4>
+                            <p class="text-gray-600 mt-2">Gli affitti privati per turisti francesi sono cresciuti del <strong>+56%</strong>. Un target ad alto potenziale su cui concentrare sforzi di marketing mirati per diversificare i ricavi.</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Fattori di Rischio</h3>
+                    <div class="space-y-6">
+                        <div class="kpi-card risk-card">
+                            <h4 class="font-bold text-lg text-[#C06C5D]">Rischio Normativo (Licenza VV)</h4>
+                            <p class="text-gray-600 mt-2">La pressione sociale contro l'overtourism sta spingendo il governo a una nuova legge più restrittiva. L'ottenimento di nuove licenze "Vivienda Vacacional" diventerà molto difficile. <strong>Acquistare un immobile con licenza preesistente e valida è un fattore critico e non negoziabile.</strong></p>
+                        </div>
+                         <div class="kpi-card risk-card">
+                            <h4 class="font-bold text-lg text-[#C06C5D]">Compressione dei Rendimenti</h4>
+                            <p class="text-gray-600 mt-2">I prezzi degli immobili (+8.3% a Costa Adeje) crescono più velocemente delle tariffe di affitto (+3%). Il ritorno sull'investimento dipenderà sia dal flusso di cassa che dall'apprezzamento del capitale a lungo termine.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="investment-analysis" class="mb-16">
+            <h2 class="text-3xl font-extrabold text-[#4E8D7C] mb-2">Analisi dell'Investimento a Costa Adeje</h2>
+            <p class="text-lg mb-8 text-gray-600">Esplora le metriche di performance per diverse tipologie di immobili e visualizza una proiezione di rendimento basata su un caso di studio reale in Calle Alemania.</p>
+            
+            <div class="mb-8 bg-gray-100 p-4 rounded-lg">
+                <label for="property-type" class="block text-sm font-medium text-gray-700 mb-2">Seleziona una tipologia di immobile per visualizzare la Tariffa Media Giornaliera (ADR):</label>
+                <div id="property-type-selector" class="flex flex-wrap gap-2">
+                     <button data-type="studio" class="prop-type-btn bg-white hover:bg-[#4E8D7C] hover:text-white text-gray-800 py-2 px-4 border border-gray-300 rounded shadow">Monolocale</button>
+                     <button data-type="bilocale" class="prop-type-btn bg-white hover:bg-[#4E8D7C] hover:text-white text-gray-800 py-2 px-4 border border-gray-300 rounded shadow">Bilocale</button>
+                     <button data-type="trilocale" class="prop-type-btn bg-white hover:bg-[#4E8D7C] hover:text-white text-gray-800 py-2 px-4 border border-gray-300 rounded shadow">Trilocale</button>
+                     <button data-type="villa" class="prop-type-btn bg-white hover:bg-[#4E8D7C] hover:text-white text-gray-800 py-2 px-4 border border-gray-300 rounded shadow">Villa</button>
+                </div>
+                <div id="adr-display" class="mt-4 kpi-card text-center">
+                    <p class="text-2xl font-bold text-[#4E8D7C]">Seleziona una tipologia</p>
+                    <p class="text-gray-500">Tariffa Media Giornaliera (ADR)</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">Proiezione Finanziaria: Bilocale Ristrutturato</h3>
+                    <p class="text-sm text-gray-500 mb-4">Caso di studio basato su un immobile di 64m² in Calle Alemania. Investimento totale stimato: €432,730.</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <tbody>
+                                <tr class="bg-white border-b">
+                                    <th scope="row" class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">Ricavo Lordo Annuo</th>
+                                    <td class="py-3 px-4 text-right font-semibold">€60,672</td>
+                                </tr>
+                                <tr class="bg-gray-50 border-b">
+                                    <th scope="row" class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">Costi Operativi Totali</th>
+                                    <td class="py-3 px-4 text-right font-semibold">(€32,842)</td>
+                                </tr>
+                                <tr class="bg-white border-b">
+                                    <th scope="row" class="py-3 px-4 font-bold text-gray-900 whitespace-nowrap">Reddito Operativo Netto (NOI)</th>
+                                    <td class="py-3 px-4 text-right font-bold text-lg">€27,830</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <th scope="row" class="py-3 px-4 font-bold text-[#4E8D7C] whitespace-nowrap">Rendimento Netto Stimato</th>
+                                    <td class="py-3 px-4 text-right font-bold text-lg text-[#4E8D7C]">6.43%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">Andamento Prezzi Immobiliari (Costa Adeje)</h3>
+                    <p class="text-sm text-gray-500 mb-4">Il valore degli immobili mostra una crescita costante, componente fondamentale del ritorno totale sull'investimento.</p>
+                    <div class="chart-container">
+                        <canvas id="priceTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="action-plan">
+            <h2 class="text-3xl font-extrabold text-[#4E8D7C] mb-2">Piano d'Azione Pratico per l'Investitore</h2>
+            <p class="text-lg mb-8 text-gray-600">Un approccio strutturato in 4 fasi per navigare il mercato, mitigare i rischi e massimizzare la redditività del suo investimento a Costa Adeje.</p>
+            <div id="accordion-container" class="space-y-4">
+                <div class="accordion-item bg-white rounded-lg shadow-md">
+                    <button class="accordion-header w-full text-left p-6 font-bold text-lg flex justify-between items-center">
+                        <span>Fase 1: Due Diligence e Selezione</span>
+                        <span class="transform transition-transform duration-300">&darr;</span>
+                    </button>
+                    <div class="accordion-content px-6 pb-6 text-gray-600">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Verifica Legale Prioritaria:</strong> Ingaggiare un avvocato locale per verificare la validità e trasferibilità della licenza VV.</li>
+                            <li><strong>Audit dell'Immobile:</strong> Dare priorità a proprietà con vista mare, terrazza, piscina e layout flessibile.</li>
+                            <li><strong>Analisi Regolamenti Condominiali:</strong> Assicurarsi che non ci siano divieti all'affitto turistico.</li>
+                            <li><strong>Calcolo Costo "Tutto Incluso":</strong> Considerare un 8-10% aggiuntivo per tasse e spese di acquisizione.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white rounded-lg shadow-md">
+                    <button class="accordion-header w-full text-left p-6 font-bold text-lg flex justify-between items-center">
+                        <span>Fase 2: Acquisto e Struttura Finanziaria</span>
+                        <span class="transform transition-transform duration-300">&darr;</span>
+                    </button>
+                    <div class="accordion-content px-6 pb-6 text-gray-600">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Costruzione Team Locale:</strong> Avvalersi di avvocato, consulente fiscale e agente immobiliare di fiducia.</li>
+                            <li><strong>Finanziamento:</strong> Essere preparati a condizioni più stringenti per i non residenti (LTV 60-70%).</li>
+                            <li><strong>Struttura di Proprietà:</strong> Consultare un fiscalista per decidere se acquistare come persona fisica o tramite società.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white rounded-lg shadow-md">
+                    <button class="accordion-header w-full text-left p-6 font-bold text-lg flex justify-between items-center">
+                        <span>Fase 3: Gestione e Ottimizzazione Ricavi</span>
+                        <span class="transform transition-transform duration-300">&darr;</span>
+                    </button>
+                    <div class="accordion-content px-6 pb-6 text-gray-600">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Scelta Modello di Gestione:</strong> Valutare autogestione vs. agenzia professionale (raccomandata per non residenti).</li>
+                            <li><strong>Prezzo Dinamico:</strong> Utilizzare software specializzati per adattare le tariffe alla domanda stagionale e agli eventi.</li>
+                            <li><strong>Marketing Mirato:</strong> Creare annunci di alta qualità, tradotti in inglese, tedesco e francese.</li>
+                            <li><strong>Ristrutturazione a Valore Aggiunto:</strong> Investire in upgrade (es. spazio lavoro) per giustificare un ADR più alto.</li>
+                        </ul>
+                    </div>
+                </div>
+                 <div class="accordion-item bg-white rounded-lg shadow-md">
+                    <button class="accordion-header w-full text-left p-6 font-bold text-lg flex justify-between items-center">
+                        <span>Fase 4: Monitoraggio e Adattamento</span>
+                        <span class="transform transition-transform duration-300">&darr;</span>
+                    </button>
+                    <div class="accordion-content px-6 pb-6 text-gray-600">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Monitoraggio Normativo:</strong> Seguire l'evoluzione della nuova legge sul turismo e essere pronti ad adattarsi.</li>
+                            <li><strong>Revisione Performance:</strong> Analizzare trimestralmente le metriche (ADR, Occupazione) e confrontarle con il mercato.</li>
+                            <li><strong>Gestione Feedback Ospiti:</strong> Utilizzare le recensioni per migliorare costantemente il servizio e la reputazione online.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white mt-16">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
+            <p>&copy; 2025 Analisi di Mercato per Investitori. Dati basati sul report di analisi per l'anno 2024.</p>
+            <p>Questo documento è a solo scopo informativo e non costituisce una consulenza finanziaria.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chartColors = {
+                primary: '#4E8D7C',
+                secondary: '#A7C4BC',
+                tertiary: '#EAE3D2',
+                accent: '#C06C5D'
+            };
+
+            // Market Chart
+            const marketCtx = document.getElementById('marketChart').getContext('2d');
+            new Chart(marketCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Regno Unito', 'Germania', 'Francia', 'Spagna', 'Italia', 'Altri'],
+                    datasets: [{
+                        label: 'Quota di Mercato Turistico',
+                        data: [35, 20, 15, 10, 8, 12],
+                        backgroundColor: [chartColors.primary, chartColors.secondary, chartColors.accent, chartColors.tertiary, '#D3B8AE', '#E0E0E0'],
+                        borderColor: 'rgba(255, 255, 255, 0.5)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.raw}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Percentuale (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Motivation Chart
+            const motivationCtx = document.getElementById('motivationChart').getContext('2d');
+            new Chart(motivationCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Riposo', 'Esplorazione', 'Famiglia', 'Altro'],
+                    datasets: [{
+                        data: [51, 21, 16, 12],
+                        backgroundColor: [chartColors.primary, chartColors.secondary, chartColors.accent, chartColors.tertiary],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+
+            // Price Trend Chart
+            const priceTrendCtx = document.getElementById('priceTrendChart').getContext('2d');
+            new Chart(priceTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Luglio 2023', 'Gennaio 2024', 'Luglio 2024', 'Gennaio 2025', 'Luglio 2025'],
+                    datasets: [{
+                        label: 'Prezzo Medio (€/m²)',
+                        data: [4612, 4750, 4873, 5050, 5277],
+                        fill: true,
+                        backgroundColor: 'rgba(78, 141, 124, 0.2)',
+                        borderColor: chartColors.primary,
+                        tension: 0.1
+                    }]
+                },
+                 options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+
+            // ADR Selector
+            const adrData = {
+                studio: '€60 - €110',
+                bilocale: '€80 - €160',
+                trilocale: '€110 - €220',
+                villa: '€250 - €1000+'
+            };
+            const adrDisplay = document.getElementById('adr-display').querySelector('p:first-child');
+            const propTypeButtons = document.querySelectorAll('.prop-type-btn');
+
+            propTypeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    propTypeButtons.forEach(btn => {
+                        btn.classList.remove('bg-[#4E8D7C]', 'text-white');
+                        btn.classList.add('bg-white', 'text-gray-800');
+                    });
+                    button.classList.add('bg-[#4E8D7C]', 'text-white');
+                    button.classList.remove('bg-white', 'text-gray-800');
+                    
+                    const type = button.dataset.type;
+                    adrDisplay.textContent = adrData[type] || 'N/A';
+                });
+            });
+
+            // Accordion
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                const arrow = header.querySelector('span:last-child');
+
+                header.addEventListener('click', () => {
+                    const isExpanded = content.style.maxHeight && content.style.maxHeight !== '0px';
+                    
+                    // Close all other items
+                    accordionItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.querySelector('.accordion-content').style.maxHeight = '0px';
+                            otherItem.querySelector('.accordion-header span:last-child').classList.remove('rotate-180');
+                        }
+                    });
+
+                    // Toggle current item
+                    if (isExpanded) {
+                        content.style.maxHeight = '0px';
+                        arrow.classList.remove('rotate-180');
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        arrow.classList.add('rotate-180');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
